@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Web Project</title>
+        <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <!-- update the version number as needed -->
+        <script defer src="/__/firebase/9.17.1/firebase-app-compat.js"></script>
+        <!-- include only the Firebase features as you need -->
+        <script defer src="/__/firebase/9.17.1/firebase-firestore-compat.js"></script>
+        <script defer src="/__/firebase/9.17.0/firebase-auth-compat.js"></script>
+
+        <!-- 
+        initialize the SDK after all desired features are loaded, set useEmulator to false
+        to avoid connecting the SDK to running emulators.
+        -->
+        <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+    
+    </head>
+    <style>
+        html,body {  height: 100%; }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+        height: 100%;
+        overflow: hidden;
+        }
+
+        body{
+            margin: 80px;
+            justify-content: center;
+            background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+        }
+        ul{
+            font-family: "Chivo Mono", monospace;
+            display: flex;
+            gap: 50px;
+        }
+        ul li{
+            list-style: none;
+        }
+        ul li a{
+            font-size: 22px;
+            font-weight: 600;
+            text-decoration: none;
+            text-transform: uppercase;
+            color: white;
+            transition: 0.5s ease;
+        }
+        ul:hover li a{
+            color: #6aecf1;
+
+        }
+        ul:hover li a:not(:hover){
+            color: white;
+            opacity: 0.3;
+            filter: blur(1px);
+        }
+
+        h5{
+            display: flex;
+            color: white;
+            margin-top: 20px;
+            font-size: 30px;
+            justify-content: center;
+        }
+        .btn_add{
+            height: 40px;
+            color: #fff;
+            background: #573b8a;
+            font-size: large;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            transition: .2s ease-in;
+            cursor: pointer;
+            width: 200px;
+            margin-right: 40px;
+        }
+        .btn_add:hover{
+            background: #6d44b8;
+        }
+        .add{
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .category{
+            color: #0f0c29;
+            font-size: large;
+            background: white;
+            height: 40px;
+            padding-left: 10px;
+            width: 24%;
+            border: none;
+            border-radius: 5px;
+            margin: 2px;
+        }
+        .average{
+            color: white;
+            font-size: 30px;
+            font-weight: 600;
+            padding-right: 20px;
+        }
+        .scroll-container {
+            overflow-y: scroll;
+            scroll-behavior: smooth;
+        }
+
+
+    </style>
+
+    <script type="module">
+        const myObjectString2 = localStorage.getItem('objectGreeting');
+        const myObject2 = JSON.parse(myObjectString2);
+        var db = firebase.firestore();
+        var docRef = db.collection("Students").doc(myObject2);
+        docRef.get().then((doc) => {
+            if (doc.exists) {
+                document.getElementById("stuName").innerHTML="Hello "+doc.data().Name+", welcome to your gradebook!";
+            } else {
+                // doc.data() will be undefined in this case
+                console.log("No such document!");
+            }
+        }).catch((error) => {
+            console.log("Error getting document:", error);
+        });
+
+        for(i=0 ; i<10; i++){
+            document.getElementById('year'+i+'').value = 'Year';
+            document.getElementById('semester'+i+'').value = 'Semester';
+        }
+
+        const logoutButton = document.getElementById('save');
+        let currentUser = null;
+    
+        function saveValuesOnLogout(userId) {
+            const year = document.getElementById('year0').value;
+            const semester = document.getElementById('semester0').value;
+            const name_course = document.getElementById('name_course0').value;
+            const credits = document.getElementById('credits0').value;
+            const grade = document.getElementById('grade0').value;
+            localStorage.setItem(`year_${userId}`, year);
+            localStorage.setItem(`semester_${userId}`, semester);
+            localStorage.setItem(`name_course_${userId}`, name_course);
+            localStorage.setItem(`credits_${userId}`, credits);
+            localStorage.setItem(`grade_${userId}`, grade);
+
+            const year1 = document.getElementById('year1').value;
+            const semester1 = document.getElementById('semester1').value;
+            const name_course1 = document.getElementById('name_course1').value;
+            const credits1 = document.getElementById('credits1').value;
+            const grade1 = document.getElementById('grade1').value;
+            localStorage.setItem(`year1_${userId}`, year1);
+            localStorage.setItem(`semester1_${userId}`, semester1);
+            localStorage.setItem(`name_course1_${userId}`, name_course1);
+            localStorage.setItem(`credits1_${userId}`, credits1);
+            localStorage.setItem(`grade1_${userId}`, grade1);
+
+            const year2 = document.getElementById('year2').value;
+            const semester2 = document.getElementById('semester2').value;
+            const name_course2 = document.getElementById('name_course2').value;
+            const credits2 = document.getElementById('credits2').value;
+            const grade2 = document.getElementById('grade2').value;
+            localStorage.setItem(`year2_${userId}`, year2);
+            localStorage.setItem(`semester2_${userId}`, semester2);
+            localStorage.setItem(`name_course2_${userId}`, name_course2);
+            localStorage.setItem(`credits2_${userId}`, credits2);
+            localStorage.setItem(`grade2_${userId}`, grade2);
+
+            const year3 = document.getElementById('year3').value;
+            const semester3 = document.getElementById('semester3').value;
+            const name_course3 = document.getElementById('name_course3').value;
+            const credits3 = document.getElementById('credits3').value;
+            const grade3 = document.getElementById('grade3').value;
+            localStorage.setItem(`year3_${userId}`, year3);
+            localStorage.setItem(`semester3_${userId}`, semester3);
+            localStorage.setItem(`name_course3_${userId}`, name_course3);
+            localStorage.setItem(`credits3_${userId}`, credits3);
+            localStorage.setItem(`grade3_${userId}`, grade3);
+
+            const year4 = document.getElementById('year4').value;
+            const semester4 = document.getElementById('semester4').value;
+            const name_course4 = document.getElementById('name_course4').value;
+            const credits4 = document.getElementById('credits4').value;
+            const grade4 = document.getElementById('grade4').value;
+            localStorage.setItem(`year4_${userId}`, year4);
+            localStorage.setItem(`semester4_${userId}`, semester4);
+            localStorage.setItem(`name_course4_${userId}`, name_course4);
+            localStorage.setItem(`credits4_${userId}`, credits4);
+            localStorage.setItem(`grade4_${userId}`, grade4);
+
+            const year5 = document.getElementById('year5').value;
+            const semester5 = document.getElementById('semester5').value;
+            const name_course5 = document.getElementById('name_course5').value;
+            const credits5 = document.getElementById('credits5').value;
+            const grade5 = document.getElementById('grade5').value;
+            localStorage.setItem(`year5_${userId}`, year5);
+            localStorage.setItem(`semester5_${userId}`, semester5);
+            localStorage.setItem(`name_course5_${userId}`, name_course5);
+            localStorage.setItem(`credits5_${userId}`, credits5);
+            localStorage.setItem(`grade5_${userId}`, grade5);
+
+            const year6 = document.getElementById('year6').value;
+            const semester6 = document.getElementById('semester6').value;
+            const name_course6 = document.getElementById('name_course6').value;
+            const credits6 = document.getElementById('credits6').value;
+            const grade6 = document.getElementById('grade6').value;
+            localStorage.setItem(`year6_${userId}`, year6);
+            localStorage.setItem(`semester6_${userId}`, semester6);
+            localStorage.setItem(`name_course6_${userId}`, name_course6);
+            localStorage.setItem(`credits6_${userId}`, credits6);
+            localStorage.setItem(`grade6_${userId}`, grade6);
+
+            const year7 = document.getElementById('year7').value;
+            const semester7 = document.getElementById('semester7').value;
+            const name_course7 = document.getElementById('name_course7').value;
+            const credits7 = document.getElementById('credits7').value;
+            const grade7 = document.getElementById('grade7').value;
+            localStorage.setItem(`year7_${userId}`, year7);
+            localStorage.setItem(`semester7_${userId}`, semester7);
+            localStorage.setItem(`name_course7_${userId}`, name_course7);
+            localStorage.setItem(`credits7_${userId}`, credits7);
+            localStorage.setItem(`grade7_${userId}`, grade7);
+
+            const year8 = document.getElementById('year8').value;
+            const semester8 = document.getElementById('semester8').value;
+            const name_course8 = document.getElementById('name_course8').value;
+            const credits8 = document.getElementById('credits8').value;
+            const grade8 = document.getElementById('grade8').value;
+            localStorage.setItem(`year8_${userId}`, year8);
+            localStorage.setItem(`semester8_${userId}`, semester8);
+            localStorage.setItem(`name_course8_${userId}`, name_course8);
+            localStorage.setItem(`credits8_${userId}`, credits8);
+            localStorage.setItem(`grade8_${userId}`, grade8);
+
+            const year9 = document.getElementById('year9').value;
+            const semester9 = document.getElementById('semester9').value;
+            const name_course9 = document.getElementById('name_course9').value;
+            const credits9 = document.getElementById('credits9').value;
+            const grade9 = document.getElementById('grade9').value;
+            localStorage.setItem(`year9_${userId}`, year9);
+            localStorage.setItem(`semester9_${userId}`, semester9);
+            localStorage.setItem(`name_course9_${userId}`, name_course9);
+            localStorage.setItem(`credits9_${userId}`, credits9);
+            localStorage.setItem(`grade9_${userId}`, grade9);
+        }
+    
+        function restoreValuesOnLogin(userId) {
+            const year = localStorage.getItem(`year_${userId}`);
+            const semester = localStorage.getItem(`semester_${userId}`);
+            const name_course = localStorage.getItem(`name_course_${userId}`);
+            const credits = localStorage.getItem(`credits_${userId}`);
+            const grade = localStorage.getItem(`grade_${userId}`);
+            document.getElementById('year0').value = year;
+            document.getElementById('semester0').value = semester;
+            document.getElementById('name_course0').value = name_course;
+            document.getElementById('credits0').value = credits;
+            document.getElementById('grade0').value = grade;
+
+            const year1 = localStorage.getItem(`year1_${userId}`);
+            const semester1 = localStorage.getItem(`semester1_${userId}`);
+            const name_course1 = localStorage.getItem(`name_course1_${userId}`);
+            const credits1 = localStorage.getItem(`credits1_${userId}`);
+            const grade1 = localStorage.getItem(`grade1_${userId}`);
+            document.getElementById('year1').value = year1;
+            document.getElementById('semester1').value = semester1;
+            document.getElementById('name_course1').value = name_course1;
+            document.getElementById('credits1').value = credits1;
+            document.getElementById('grade1').value = grade1;
+
+            const year2 = localStorage.getItem(`year2_${userId}`);
+            const semester2 = localStorage.getItem(`semester2_${userId}`);
+            const name_course2 = localStorage.getItem(`name_course2_${userId}`);
+            const credits2 = localStorage.getItem(`credits2_${userId}`);
+            const grade2 = localStorage.getItem(`grade2_${userId}`);
+            document.getElementById('year2').value = year2;
+            document.getElementById('semester2').value = semester2;
+            document.getElementById('name_course2').value = name_course2;
+            document.getElementById('credits2').value = credits2;
+            document.getElementById('grade2').value = grade2;
+
+            const year3 = localStorage.getItem(`year3_${userId}`);
+            const semester3 = localStorage.getItem(`semester3_${userId}`);
+            const name_course3 = localStorage.getItem(`name_course3_${userId}`);
+            const credits3 = localStorage.getItem(`credits3_${userId}`);
+            const grade3 = localStorage.getItem(`grade3_${userId}`);
+            document.getElementById('year3').value = year3;
+            document.getElementById('semester3').value = semester3;
+            document.getElementById('name_course3').value = name_course3;
+            document.getElementById('credits3').value = credits3;
+            document.getElementById('grade3').value = grade3;
+
+            const year4 = localStorage.getItem(`year4_${userId}`);
+            const semester4 = localStorage.getItem(`semester4_${userId}`);
+            const name_course4 = localStorage.getItem(`name_course4_${userId}`);
+            const credits4 = localStorage.getItem(`credits4_${userId}`);
+            const grade4 = localStorage.getItem(`grade4_${userId}`);
+            document.getElementById('year4').value = year4;
+            document.getElementById('semester4').value = semester4;
+            document.getElementById('name_course4').value = name_course4;
+            document.getElementById('credits4').value = credits4;
+            document.getElementById('grade4').value = grade4;
+
+            const year5 = localStorage.getItem(`year5_${userId}`);
+            const semester5 = localStorage.getItem(`semester5_${userId}`);
+            const name_course5 = localStorage.getItem(`name_course5_${userId}`);
+            const credits5 = localStorage.getItem(`credits5_${userId}`);
+            const grade5 = localStorage.getItem(`grade5_${userId}`);
+            document.getElementById('year5').value = year5;
+            document.getElementById('semester5').value = semester5;
+            document.getElementById('name_course5').value = name_course5;
+            document.getElementById('credits5').value = credits5;
+            document.getElementById('grade5').value = grade5;
+
+            const year6 = localStorage.getItem(`year6_${userId}`);
+            const semester6 = localStorage.getItem(`semester6_${userId}`);
+            const name_course6 = localStorage.getItem(`name_course6_${userId}`);
+            const credits6 = localStorage.getItem(`credits6_${userId}`);
+            const grade6 = localStorage.getItem(`grade6_${userId}`);
+            document.getElementById('year6').value = year6;
+            document.getElementById('semester6').value = semester6;
+            document.getElementById('name_course6').value = name_course6;
+            document.getElementById('credits6').value = credits6;
+            document.getElementById('grade6').value = grade6;
+
+            const year7 = localStorage.getItem(`year7_${userId}`);
+            const semester7 = localStorage.getItem(`semester7_${userId}`);
+            const name_course7 = localStorage.getItem(`name_course7_${userId}`);
+            const credits7 = localStorage.getItem(`credits7_${userId}`);
+            const grade7 = localStorage.getItem(`grade7_${userId}`);
+            document.getElementById('year7').value = year7;
+            document.getElementById('semester7').value = semester7;
+            document.getElementById('name_course7').value = name_course7;
+            document.getElementById('credits7').value = credits7;
+            document.getElementById('grade7').value = grade7;
+
+            const year8 = localStorage.getItem(`year8_${userId}`);
+            const semester8 = localStorage.getItem(`semester8_${userId}`);
+            const name_course8 = localStorage.getItem(`name_course8_${userId}`);
+            const credits8 = localStorage.getItem(`credits8_${userId}`);
+            const grade8 = localStorage.getItem(`grade8_${userId}`);
+            document.getElementById('year8').value = year8;
+            document.getElementById('semester8').value = semester8;
+            document.getElementById('name_course8').value = name_course8;
+            document.getElementById('credits8').value = credits8;
+            document.getElementById('grade8').value = grade8;
+
+            const year9 = localStorage.getItem(`year9_${userId}`);
+            const semester9 = localStorage.getItem(`semester9_${userId}`);
+            const name_course9 = localStorage.getItem(`name_course9_${userId}`);
+            const credits9 = localStorage.getItem(`credits9_${userId}`);
+            const grade9 = localStorage.getItem(`grade9_${userId}`);
+            document.getElementById('year9').value = year9;
+            document.getElementById('semester9').value = semester9;
+            document.getElementById('name_course9').value = name_course9;
+            document.getElementById('credits9').value = credits9;
+            document.getElementById('grade9').value = grade9;
+        }
+    
+        logoutButton.addEventListener('click', () => {
+            saveValuesOnLogout(currentUser);
+            currentUser = null;
+        });
+    
+        window.addEventListener('load', () => {
+            // In your application, you would set the current user ID when the user logs in
+            currentUser = myObject2;
+            restoreValuesOnLogin(currentUser);
+            
+        });
+
+    </script>
+    <script src="app.js"></script> 
+    <body class="scroll-container">
+        <div style="display:inline-block">
+            <nav class="navbar fixed-top" style="margin-top: 8px; display: block;">
+                <ul>
+                    <li><a onclick="logout()" href="#">Logout</a></li>
+                </ul> 
+            </nav>
+        </div>
+        <div><h5 id="stuName">Hello, welcome to your gradebook!</h5></div>
+        <div class="row">
+            <div class="col -sm-6">
+                <div class="add">
+                    <div><label class="average" >Your final average:</label></div>
+                    <div><p class="average" id="result"></p></div>
+                </div>
+            </div>
+            <div class="col -sm-6">
+                <div class="add">
+                    <button id="save" class="btn_add" onclick="savee();return false;">Calculate & Save</button>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="target">
+            <form id="adding0" class="add" style="margin-top: 10px;">
+                <select class="category" id="year0" placeholder="Year"><option selected>Year</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select>
+                <select class="category" id="semester0"><option selected>Semester</option><option>A</option><option>B</option><option>S</option></select>
+                <input class="category" type="text" id="name_course0"  placeholder="Name course" value="Name course">
+                <input class="category"  id="credits0"  type="number" name="credits" placeholder="Credits">
+                <input class="category"  id="grade0" type="number" name="final grade" placeholder="Final grade">
+                <button class="category"  onclick="del(this,0);return false;"  id="delete0" style="width: 5%;"><i class="fa fa-trash"></i></button>
+            </form>
+            <form id="adding1" class="add" style="margin-top: 10px;">
+                <select class="category" id="year1" placeholder="Year"><option selected>Year</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select>
+                <select class="category" id="semester1"><option selected>Semester</option><option>A</option><option>B</option><option>S</option></select>
+                <input class="category" type="text" id="name_course1" placeholder="Name course" value="Name course">
+                <input class="category"  id="credits1"  type="number" name="credits" placeholder="Credits">
+                <input class="category"  id="grade1" type="number" name="final grade" placeholder="Final grade">
+                <button class="category" onclick="del(this,1);return false;" id="delete1" style="width: 5%;"><i class="fa fa-trash"></i></button>
+            </form>
+            <form id="adding2" class="add" style="margin-top: 10px;">
+                <select class="category" id="year2" placeholder="Year"><option selected>Year</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select>
+                <select class="category" id="semester2"><option selected>Semester</option><option>A</option><option>B</option><option>S</option></select>
+                <input class="category" type="text" id="name_course2" placeholder="Name course" value="Name course">
+                <input class="category"  id="credits2"  type="number" name="credits" placeholder="Credits">
+                <input class="category"  id="grade2" type="number" name="final grade" placeholder="Final grade">
+                <button class="category"  onclick="del(this,2);return false;" id="delete2" style="width: 5%;"><i class="fa fa-trash"></i></button>
+            </form>
+            <form id="adding3" class="add" style="margin-top: 10px;">
+                <select class="category" id="year3" placeholder="Year"><option selected>Year</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select>
+                <select class="category" id="semester3"><option selected>Semester</option><option>A</option><option>B</option><option>S</option></select>
+                <input class="category" type="text" id="name_course3" placeholder="Name course" value="Name course">
+                <input class="category"  id="credits3"  type="number" name="credits" placeholder="Credits">
+                <input class="category"  id="grade3" type="number" name="final grade" placeholder="Final grade">
+                <button class="category" onclick="del(this,3);return false;"  id="delete3" style="width: 5%;"><i class="fa fa-trash"></i></button>
+            </form>
+            <form id="adding4" class="add" style="margin-top: 10px;">
+                <select class="category" id="year4" placeholder="Year"><option selected>Year</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select>
+                <select class="category" id="semester4"><option selected>Semester</option><option>A</option><option>B</option><option>S</option></select>
+                <input class="category" type="text" id="name_course4" placeholder="Name course" value="Name course">
+                <input class="category"  id="credits4"  type="number" name="credits" placeholder="Credits">
+                <input class="category"  id="grade4" type="number" name="final grade" placeholder="Final grade">
+                <button class="category" onclick="del(this,4);return false;" id="delete4" style="width: 5%;"><i class="fa fa-trash"></i></button>
+            </form>
+            <form id="adding5" class="add" style="margin-top: 10px;">
+                <select class="category" id="year5" placeholder="Year"><option selected>Year</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select>
+                <select class="category" id="semester5"><option selected>Semester</option><option>A</option><option>B</option><option>S</option></select>
+                <input class="category" type="text" id="name_course5" placeholder="Name course" value="Name course">
+                <input class="category"  id="credits5"  type="number" name="credits" placeholder="Credits">
+                <input class="category"  id="grade5" type="number" name="final grade" placeholder="Final grade">
+                <button class="category" onclick="del(this,5);return false;"  id="delete5" style="width: 5%;"><i  class="fa fa-trash"></i></button>
+            </form>
+            <form id="adding6" class="add" style="margin-top: 10px;">
+                <select class="category" id="year6" placeholder="Year"><option selected>Year</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select>
+                <select class="category" id="semester6"><option selected>Semester</option><option>A</option><option>B</option><option>S</option></select>
+                <input class="category" type="text" id="name_course6" placeholder="Name course" value="Name course">
+                <input class="category"  id="credits6"  type="number" name="credits" placeholder="Credits">
+                <input class="category"  id="grade6" type="number" name="final grade" placeholder="Final grade">
+                <button class="category" onclick="del(this,6);return false;"  id="delete6" style="width: 5%;"><i class="fa fa-trash"></i></button>
+            </form>
+            <form id="adding7" class="add" style="margin-top: 10px;">
+                <select class="category" id="year7" placeholder="Year"><option selected>Year</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select>
+                <select class="category" id="semester7"><option selected>Semester</option><option>A</option><option>B</option><option>S</option></select>
+                <input class="category" type="text" id="name_course7" placeholder="Name course" value="Name course">
+                <input class="category"  id="credits7"  type="number" name="credits" placeholder="Credits">
+                <input class="category"  id="grade7" type="number" name="final grade" placeholder="Final grade">
+                <button class="category" onclick="del(this,7);return false;"  id="delete7" style="width: 5%;"><i class="fa fa-trash"></i></button>
+            </form>
+            <form id="adding8" class="add" style="margin-top: 10px;">
+                <select class="category" id="year8" placeholder="Year"><option selected>Year</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select>
+                <select class="category" id="semester8"><option selected>Semester</option><option>A</option><option>B</option><option>S</option></select>
+                <input class="category" type="text" id="name_course8" placeholder="Name course" value="Name course" >
+                <input class="category"  id="credits8"  type="number" name="credits" placeholder="Credits">
+                <input class="category"  id="grade8" type="number" name="final grade" placeholder="Final grade">
+                <button class="category" onclick="del(this,8);return false;" id="delete8" style="width: 5%;"><i class="fa fa-trash"></i></button>
+            </form>
+            <form id="adding9" class="add" style="margin-top: 10px;">
+                <select class="category" id="year9" placeholder="Year"><option selected>Year</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select>
+                <select class="category" id="semester9"><option selected>Semester</option><option>A</option><option>B</option><option>S</option></select>
+                <input class="category" type="text" id="name_course9" placeholder="Name course" value="Name course">
+                <input class="category"  id="credits9"  type="number" name="credits" placeholder="Credits">
+                <input class="category"  id="grade9" type="number" name="final grade" placeholder="Final grade">
+                <button class="category" onclick="del(this,9);return false;" id="delete9" style="width: 5%;"><i class="fa fa-trash"></i></button>
+            </form>
+        </div>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>  
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+    </body>
+
+</html>
+
